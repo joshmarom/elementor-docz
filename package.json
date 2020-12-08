@@ -1,5 +1,5 @@
 {
-  "name": "gatsby-starter-docz-netlifycms",
+  "name": "elementor-docz",
   "author": "Colby Fayock <hello@colbyfayock.com>",
   "version": "0.1.0",
   "description": "Easily spin up a static documentation site with Docz and Netlify CMS",
@@ -25,9 +25,9 @@
     "react": "^16.12.0",
     "react-dom": "^16.12.0"
   },
-  "homepage": "https://github.com/colbyfayock/gatsby-starter-docz-netlifycms",
-  "repository": "git@github.com:colbyfayock/gatsby-starter-docz-netlifycms.git",
+  "homepage": "https://github.com/joshmarom/elementor-docz",
+  "repository": "git@github.com:joshmarom/elementor-docz.git",
   "bugs": {
-    "url": "https://github.com/colbyfayock/gatsby-starter-docz-netlifycms/issues"
+    "url": "https://github.com/joshmarom/elementor-docz/issues"
   }
 }
