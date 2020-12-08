@@ -3,48 +3,51 @@ name: Quick Start
 menu: ""
 route: /
 ---
-# 🗒️ Elementor Docz with Netlify CMS
+# Getting Started
 
-This documentation site is powered by Docz and Netlify CMS.
+Elementor is an extendable website builder, you can add your own extensions and addons on top of Elementor, just like WordPress core. Elementor extensions are the same as regular WordPress plugins, they extend the basic functionality.
 
-### Here's What You Get
+But before we start, let’s examine the proper way to write code for Elementor. In this page you can find the best practice for Elementor developers.
 
-* [Docz](https://docz.site) documentation engine powered by [Gatsby](https://www.gatsbyjs.org/)
-* [Netlify CMS](https://www.netlifycms.org/) content management
 
-## 🚀 Setting Up Your Lorem Elementor
 
-1. **Create a Gatsby site.**
+## Coding Standards
 
-   Use the Gatsby CLI to create a new site, specifying the default starter.
+Websites use Elementor daily, any extension developed for Elementor should have an unified and pleasant experience while maintaining WordPress plugin guidelines, [coding standards](https://make.wordpress.org/core/handbook/best-practices/coding-standards/), [best practice](https://make.wordpress.org/core/handbook/best-practices/), and not do anything malicious.
 
-   ```shell
-   gatsby new my-docz-site https://github.com/colbyfayock/gatsby-starter-docz-netlifycms
-   ```
-2. **Start developing.**
+Note that you can also [define a check for code standard in PHPStorm](https://kellenmace.com/set-up-php-codesniffer-in-phpstorm-with-wordpress-coding-standards/).
 
-   Navigate into your new site’s directory and start it up.
+## Plugin File Name
 
-   ```shell
-   cd my-docz-site/
-   npm run develop
-   ```
-3. **Open the source code and start editing!**
+The name of the file that runs the plugin should be in-tune with the plugin folder name. For example: `plugin-name/plugin-name.php`.
 
-   Your site is now running at `http://localhost:8000`!
+## Domain Names
 
-Note: This will request Github access and will create a repository for you
+We recommend using autoloader and namespace according to the [PSR-2](http://www.php-fig.org/psr/psr-2/) standard.
 
-### Enable & Configure Netlify Identity for Authentication
+## Translation
 
-* Navigate to **Identity** in the Netlify navigation
-* Click **Enable Identity**
-* Click **Invite Users** and enter your first user's email
-* Click **Settings & Usage**
-* **Optional:** If you'd like to close registration, scroll to **Registration Preferences** and change to **Invite Only**
-* Scroll down to **Git Gateway** and click **Enable**
-* You're ready to register and log in!
+The texts oriented for the user should be written in English, while using the WordPress translation function: `__()` / `_e()`. The translation text domain should be consistent with the plugin name. For example `plugin-name` and not initials like `pn`.
 
-Once the invited user completes registration via the link in their email, they'll be able to log in via:
+## Testing
 
-`https://docz.lmntor.xyz/admin`
+The code should be tested with [WP_DEBUG](https://codex.wordpress.org/Debugging_in_WordPress "WP_DEBUG mode") mode on, this way you can see the the PHP notices and warnings. This will make sure you catch bugs before releasing your extension to the general public.
+
+## Prevent Data Leaks
+
+Elementor extensions should try to prevent direct access to PHP files. This can be done by adding the following code after the opening PHP tag in each PHP file:
+
+```php
+<?php
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
+```
+
+## Extending Elementor
+
+How can you extend Elementor? See the following tutorials:
+
+* [Creating an Extension for Elementor](https://developers.elementor.com/creating-an-extension-for-elementor/)
+* [Creating a new Elementor Widget](https://developers.elementor.com/creating-a-new-widget/)
+* [Creating a new Elementor Control](https://developers.elementor.com/creating-a-new-control/)
