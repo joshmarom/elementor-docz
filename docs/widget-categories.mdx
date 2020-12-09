@@ -1,0 +1,24 @@
+---
+name: Widget Categories
+route: widgets/widget-categories
+---
+# Widget Categories
+Widget categories in Elementor are used to organize the widgets into groups. When Elementor is initialized, it registers several default categories. The categories are displayed in the widgets panel, only if they have widgets assigned to them.
+
+### Default Categories
+When [initializing elements](https://code.elementor.com/classes/elementor-elements_manager/), Elementor registers widgets categories:
+* **Basic** – The `basic` category. 
+* **Pro** – Elementor Pro `pro-elements` category. 
+* **Theme** – Elementor Pro `theme-elements` category. 
+* **WooCommerce** – Elementor Pro `woocommerce-elements` category. 
+* **General** – The `general` category. 
+* ***{{custom}}*** – Custom categories added by external developers. 
+* **Pojo Themes** – The `pojo` category displaying [Pojo themes](https://pojo.me/) widgets. 
+* **WordPress** – The `wordpress` category displaying [WordPress](https://wordpress.org/) widgets. 
+
+### Using Widget Categories
+We use widget categories while registering new Elementor widgets. By extending the [**Widget_Base**](https://code.elementor.com/classes/elementor-widget_base/) class, we are inheriting the [**Widget_Base::get_categories()**](https://code.elementor.com/methods/elementor-widget_base-get_categories/) method that returns the `general` category by default. To assign the widget to a different category, we need to override the method and return our new category the following way: 
+
+```php
+add_category( 'first-category', [ 'title' => __( 'First Category', 'plugin-name' ), 'icon' => 'fa fa-plug', ] ); $elements_manager->add_category( 'second-category', [ 'title' => __( 'Second Category', 'plugin-name' ), 'icon' => 'fa fa-plug', ] ); } add_action( 'elementor/elements/categories_registered', 'add_elementor_widget_categories' );
+```
