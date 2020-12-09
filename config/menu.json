@@ -2,6 +2,9 @@
   "menuItems": [
     {
       "name": "General"
+    },
+    {
+      "name": "Widgets"
     }
   ]
 }
