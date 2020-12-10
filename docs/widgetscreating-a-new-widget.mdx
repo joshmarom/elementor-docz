@@ -97,25 +97,25 @@ Next we need to add the widget controls using the `\register_controls()` method
 
     	protected function _register_controls() {
 
-    		$this--->start_controls_section(
+    		$this->start_controls_section(
     			'content_section',
     			[
-    				'label' =&gt; __( 'Content', 'plugin-name' ),
-    				'tab' =&gt; \Elementor\Controls_Manager::TAB_CONTENT,
+    				'label' => __( 'Content', 'plugin-name' ),
+    				'tab' => \Elementor\Controls_Manager::TAB_CONTENT,
     			]
     		);
 
-    		$this-&gt;add_control(
+    		$this->add_control(
     			'url',
     			[
-    				'label' =&gt; __( 'URL to embed', 'plugin-name' ),
-    				'type' =&gt; \Elementor\Controls_Manager::TEXT,
-    				'input_type' =&gt; 'url',
-    				'placeholder' =&gt; __( 'https://your-link.com', 'plugin-name' ),
+    				'label' => __( 'URL to embed', 'plugin-name' ),
+    				'type' => \Elementor\Controls_Manager::TEXT,
+    				'input_type' => 'url',
+    				'placeholder' => __( 'https://your-link.com', 'plugin-name' ),
     			]
     		);
 
-    		$this-&gt;end_controls_section();
+    		$this->end_controls_section();
 
     	}
 
@@ -231,22 +231,22 @@ Altogether the widget class with some extra phpDocs should look something like t
     		$this--->start_controls_section(
     			'content_section',
     			[
-    				'label' =&gt; __( 'Content', 'plugin-name' ),
-    				'tab' =&gt; \Elementor\Controls_Manager::TAB_CONTENT,
+    				'label' => __( 'Content', 'plugin-name' ),
+    				'tab' => \Elementor\Controls_Manager::TAB_CONTENT,
     			]
     		);
 
-    		$this-&gt;add_control(
+    		$this->add_control(
     			'url',
     			[
-    				'label' =&gt; __( 'URL to embed', 'plugin-name' ),
-    				'type' =&gt; \Elementor\Controls_Manager::TEXT,
-    				'input_type' =&gt; 'url',
-    				'placeholder' =&gt; __( 'https://your-link.com', 'plugin-name' ),
+    				'label' => __( 'URL to embed', 'plugin-name' ),
+    				'type' => \Elementor\Controls_Manager::TEXT,
+    				'input_type' => 'url',
+    				'placeholder' => __( 'https://your-link.com', 'plugin-name' ),
     			]
     		);
 
-    		$this-&gt;end_controls_section();
+    		$this->end_controls_section();
 
     	}
 
@@ -260,7 +260,7 @@ Altogether the widget class with some extra phpDocs should look something like t
     	 */
     	protected function render() {
 
-    		$settings = $this-&gt;get_settings_for_display();
+    		$settings = $this->get_settings_for_display();
 
     		$html = wp_oembed_get( $settings['url'] );
 
