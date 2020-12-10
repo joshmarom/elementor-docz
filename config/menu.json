@@ -11,6 +11,12 @@
     },
     {
       "name": "Elementor Pro"
+    },
+    {
+      "name": "Creating a New Widget",
+      "menu": [
+        "Widgets"
+      ]
     }
   ]
 }
