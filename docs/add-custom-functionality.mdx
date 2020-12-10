@@ -1,7 +1,9 @@
 ---
 name: " Add Custom Functionality"
-route: " /add-custom-functionality"
+route: "/add-custom-functionality"
+
 ---
+
 # Add Custom Functionality
 
 Now that you have a basic WordPress plugin, we need to add our own functionality. Lets add several custom features.
@@ -9,8 +11,8 @@ Now that you have a basic WordPress plugin, we need to add our own functionality
 ## Registering Custom Styles
 
 In some widgets we would like to register custom styles, this can be done with the [**elementor/frontend/after_enqueue_styles**](https://code.elementor.com/hooks/elementor-frontend-after_enqueue_styles/) hook, using the following code:
-
-    <!--?php
+```php
+    <?php
     final class Elementor_Test_Extension {
 
     	public function init() {
@@ -28,13 +30,13 @@ In some widgets we would like to register custom styles, this can be done with t
     	}
 
     }
-
+```
 For an example of how the `init()` method should be called, see the previous post about [Creating an Extension for Elementor](https://developers.elementor.com/creating-an-extension-for-elementor/).
 
 ## Registering Custom Scripts
 
 Other widgets need custom JS to run, in those cases we need to register scripts with the [**elementor/frontend/after_register_scripts**](https://code.elementor.com/hooks/elementor-frontend-after_register_scripts/) hook, using the following code:
-
+```php
     <?php
     final class Elementor_Test_Extension {
 
@@ -54,19 +56,19 @@ Other widgets need custom JS to run, in those cases we need to register scripts 
     	}
 
     }
-
+```
 
 ## Registering New Widgets
 
 To add a new widget to Elementor we need to register the widget class using the widget manager. It’s a pretty simple process, it is done using the [**elementor/widgets/widgets_registered**](https://code.elementor.com/hooks/elementor-widgets-widgets_registered/) action.
-
+```php
     <?php
     final class Elementor_Test_Extension {
 
     	public function init() {
 
     		// Include plugin files
-    		$this--->includes();
+    		$this->includes();
 
     		// Register widgets
     		add_action( 'elementor/widgets/widgets_registered', [ $this, 'register_widgets' ] );
@@ -82,26 +84,25 @@ To add a new widget to Elementor we need to register the widget class using the 
 
     	public function register_widgets() {
 
-    		\Elementor\Plugin::instance()-&gt;widgets_manager-&gt;register_widget_type( new \Elementor_Test_Widget1() );
-    		\Elementor\Plugin::instance()-&gt;widgets_manager-&gt;register_widget_type( new \Elementor_Test_Widget2() );
+    		\Elementor\Plugin::instance()->widgets_manager->register_widget_type( new \Elementor_Test_Widget1() );
+    		\Elementor\Plugin::instance()->widgets_manager->register_widget_type( new \Elementor_Test_Widget2() );
 
     	}
 
     }
-
-
+```
 For more information about how to create your own widgets, read the [add new Elementor Widgets](https://developers.elementor.com/creating-a-new-widget/) .
 
 ## Registering New Controls
 
 To add a new controls to Elementor we need to register the control class using the [**elementor/controls/controls_registered**](https://code.elementor.com/hooks/elementor-controls-controls_registered/) action hook.
-
-    <!--?php
+```php
+    <?php
     final class Elementor_Test_Extension {
 
     	public function init() {
     		// Include plugin files
-    		$this--->includes();
+    		$this->includes();
 
     		// Register controls
     		add_action( 'elementor/controls/controls_registered', [ $this, 'register_controls' ] );
@@ -117,14 +118,14 @@ To add a new controls to Elementor we need to register the control class using t
 
     	public function register_controls() {
 
-    		$controls_manager = \Elementor\Plugin::$instance-&gt;controls_manager;
-    		$controls_manager-&gt;register_control( 'control-type-1', new Test_Control1() );
-    		$controls_manager-&gt;register_control( 'control-type-2', new Test_Control2() );
+    		$controls_manager = \Elementor\Plugin::$instance->controls_manager;
+    		$controls_manager->register_control( 'control-type-1', new Test_Control1() );
+    		$controls_manager->register_control( 'control-type-2', new Test_Control2() );
 
     	}
 
     }
-
+```
 
 For more information about how to create your own controls (input fields) for your widgets, read the [add new Elementor Controls](https://developers.elementor.com/creating-a-new-control/).
 
