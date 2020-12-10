@@ -92,12 +92,12 @@ Now that we have a class for our widget, we can start filling in the methods. Th
 
 ## Widget Controls
 
-Next we need to add the widget controls using the `\register_controls()` method. in this case, we only have one control which is a simple URL input:
+Next we need to add the widget controls using the `register_controls()` method. in this case, we only have one control which is a simple URL input:
 ```php
     <?php
     class Elementor_Test_Widget extends \Elementor\Widget_Base {
 
-    	protected function _register_controls() {
+    	protected function register_controls() {
 
     		$this->start_controls_section(
     			'content_section',
@@ -230,7 +230,7 @@ Altogether the widget class with some extra phpDocs should look something like t
     	 */
     	protected function _register_controls() {
 
-    		$this--->start_controls_section(
+    		$this-->start_controls_section(
     			'content_section',
     			[
     				'label' => __( 'Content', 'plugin-name' ),
@@ -283,6 +283,6 @@ A few things to note:
 
 - Your plugin should only include the widget class file if Elementor is active and loaded.
 
-- There are other methods available to make your widget more reactive like `\content_template()` which lets you recreate the `render()` method in JavaScript to be used in the Editor which uses [MarionetteJS template engine](https://marionettejs.com/docs/master/template.html) and using it will render the content of the widget on any instantly on any change to one of his controls without making a request to the server.
+- There are other methods available to make your widget more reactive like `content_template()` which lets you recreate the `render()` method in JavaScript to be used in the Editor which uses [MarionetteJS template engine](https://marionettejs.com/docs/master/template.html) and using it will render the content of the widget on any instantly on any change to one of his controls without making a request to the server.
 
 - There are many types of controls you can add to your widget to make it easier to configure. We have a separate section with a full [list of available controls](https://developers.elementor.com/elementor-controls/).
