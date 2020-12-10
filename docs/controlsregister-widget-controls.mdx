@@ -1,0 +1,46 @@
+---
+name: Register Widget Controls
+menu: Controls
+route: /controls/register-widget-controls
+---
+# Register Widget Controls
+
+Each widget needs to add his own controls which are basically the fields where the user select his custom data. This data is saved in the database and later it is used to generate custom output based on user selection. We need to add controls to the widget using the `\register_controls()` method.
+
+### Register Controls Method
+
+All the controls are added to the widget using the `\register_controls()` method.
+
+    <!--?php
+    class Elementor_Test_Widget extends \Elementor\Widget_Base {
+
+    	protected function _register_controls() {
+
+    		$this--->start_controls_section();
+
+    		$this-&gt;add_control();
+
+    		$this-&gt;end_controls_section();
+
+    	}
+
+    }
+
+
+### Available Control Types
+
+Elementor has three types of controls that can be added to the widget:
+
+* [**Regular Control**](https://developers.elementor.com/add-controls-to-widgets/) – a single control, added using `add_control()` method.
+
+* [**Group Control**](https://developers.elementor.com/add-group-controls-to-widgets/) – several controls grouped together, added using `add_group_control()` method.
+
+* [**Responsive Control**](https://developers.elementor.com/add-responsive-controls-to-widgets/) – a control that sets different values for different screen sizes (Desktop, Tablet, Mobile).     dded using `add_responsive_control()` method.
+
+Each control needs to be registered inside a control section. But in addition, they can be arranged in the Panel under control tabs or control popovers:
+
+* [**Control Section**](https://developers.elementor.com/add-control-section-to-widgets/) – a wrapper for controls, added using `start_controls_section()` and `end_controls_section()` methods.
+
+* [**Control Tabs**](https://developers.elementor.com/add-control-tabs-to-widgets/) – arrange controls under tabs, added using `start_controls_tabs()` and `ens_controls_tabs()` methods.
+
+* [**Control Popovers**](https://developers.elementor.com/add-control-popovers-to-widgets/) – toggle popover control, added using `start_popover()` and `end_popover()` methods.
