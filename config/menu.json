@@ -7,16 +7,16 @@
       "name": "Widgets"
     },
     {
-      "name": "Controls"
-    },
-    {
-      "name": "Elementor Pro"
-    },
-    {
       "name": "Creating a New Widget",
       "menu": [
         "Widgets"
       ]
+    },
+    {
+      "name": "Controls"
+    },
+    {
+      "name": "Elementor Pro"
     }
   ]
 }
