@@ -1,0 +1,576 @@
+---
+name: Creating an Extension for Elementor
+route: /creating-an-extension-for-elementor
+---
+# Creating an Extension for Elementor
+
+When creating Extension for Elementor you should implement all the WordPress coding standards and best practices. In addition you should follow Elementor standards and best practices.
+
+The extensions should implement object-oriented programming. It should have a main class and extra classes for smaller parts like custom [Elementor Widgets](https://developers.elementor.com/creating-a-new-widget/) or any other components.
+
+## Plugin Structure
+
+The main plugin class should have basic information about the extensions, to check basic requirements and to load the required files to activate the plugin functionality.
+
+    <!--?php
+    final class Elementor_Test_Extension {
+
+    	const VERSION;
+    	const MINIMUM_ELEMENTOR_VERSION;
+    	const MINIMUM_PHP_VERSION;
+
+    	private static $_instance = null;
+    	public static function instance() {}
+
+    	public function __construct() {}
+    	public function on_plugins_loaded() {}
+    	public function is_compatible() {
+    	public function init() {}
+    	public function includes() {}
+
+    }
+    Elementor_Test_Extension::instance();
+
+
+### Single Instance
+
+The plugin class should use a singleton design pattern to make sure it loads only once:
+
+    <?php
+    final class Elementor_Test_Extension {
+
+    	private static $_instance = null;
+
+    	public static function instance() {
+
+    		if ( is_null( self::$_instance ) ) {
+    			self::$_instance = new self();
+    		}
+    		return self::$_instance;
+
+    	}
+
+    }
+    Elementor_Test_Extension::instance();
+
+
+### Constructor
+
+The constructor should load localization functionality and initiate the plugin. The init process should check for basic requirements, such as whether Elementor is installed, activated and loaded, and then then run the plugin logic. Note that if one of the basic plugin requirements fails, the plugin logic won’t run.
+
+    <?php
+    final class Elementor_Test_Extension {
+
+    	public function __construct() {
+
+    		add_action( 'plugins_loaded', [ $this, 'on_plugins_loaded' ] );
+
+    	}
+
+    	public function i18n() {
+
+    		load_plugin_textdomain( 'elementor-test-extension' );
+
+    	}
+
+    	public function on_plugins_loaded() {
+
+    		if ( $this--->is_compatible() ) {
+    			add_action( 'elementor/init', [ $this, 'init' ] );
+    		}
+
+    	}
+
+    	public function is_compatible() {
+
+    		// Compatibility checks here...
+
+    	}
+
+    	public function init() {
+
+    		$this-&gt;i18n();
+
+    		// Plugin logic here...
+
+    	}
+
+    }
+
+
+### Check if Elementor is Installed
+
+    <!--?php
+    final class Elementor_Test_Extension {
+
+    	const MINIMUM_ELEMENTOR_VERSION = '2.0.0';
+
+    	public function is_compatible() {
+
+    		// Check if Elementor installed and activated
+    		if ( ! did_action( 'elementor/loaded' ) ) {
+    			add_action( 'admin_notices', [ $this, 'admin_notice_missing_main_plugin' ] );
+    			return false;
+    		}
+
+    		return true;
+    	}
+
+    	public function admin_notice_missing_main_plugin() {
+
+    		if ( isset( $_GET['activate'] ) ) unset( $_GET['activate'] );
+
+    		$message = sprintf(
+    			/* translators: 1: Plugin name 2: Elementor */
+    			esc_html__( '"%1$s" requires "%2$s" to be installed and activated.', 'elementor-test-extension' ),
+    			'<strong-->' . esc_html__( 'Elementor Test Extension', 'elementor-test-extension' ) . '',
+    			'<strong>' . esc_html__( 'Elementor', 'elementor-test-extension' ) . '</strong>'
+    		);
+
+    		printf( '<div class="notice notice-warning is-dismissible"><p>%1$s</p></div>', $message );
+
+    	}
+
+    }
+
+
+If Elementor is not installed and activated, an admin notice will be displayed and it won’t continue loading the functionality.
+
+### Check for Elementor Version
+
+Elementor extensions need to check for backwards compatibility with older Elementor versions. It should check for minimum required Elementor version before loading the main functionality, using the following code:
+
+    <!--?php
+    final class Elementor_Test_Extension {
+
+    	const MINIMUM_ELEMENTOR_VERSION = '2.0.0';
+
+    	public function is_compatible() {
+
+    		// Check for required Elementor version
+    		if ( ! version_compare( ELEMENTOR_VERSION, self::MINIMUM_ELEMENTOR_VERSION, '-->=' ) ) {
+    			add_action( 'admin_notices', [ $this, 'admin_notice_minimum_elementor_version' ] );
+    			return false;
+    		}
+
+    		return true;
+    	}
+
+    	public function admin_notice_minimum_elementor_version() {
+
+    		if ( isset( $_GET['activate'] ) ) unset( $_GET['activate'] );
+
+    		$message = sprintf(
+    			/* translators: 1: Plugin name 2: Elementor 3: Required Elementor version */
+    			esc_html__( '"%1$s" requires "%2$s" version %3$s or greater.', 'elementor-test-extension' ),
+    			'<strong>' . esc_html__( 'Elementor Test Extension', 'elementor-test-extension' ) . '</strong>',
+    			'<strong>' . esc_html__( 'Elementor', 'elementor-test-extension' ) . '</strong>',
+    			 self::MINIMUM_ELEMENTOR_VERSION
+    		);
+
+    		printf( '<div class="notice notice-warning is-dismissible"><p>%1$s</p></div>', $message );
+
+    	}
+
+    }
+
+
+If an old Elementor version is in use, an admin notice will be displayed and it won’t continue loading the functionality.
+
+### Check for PHP Version
+
+Elementor extensions should also check for minimum required PHP version. Keep in mind that Elementor has it’s own minimum required PHP version, the extension should use a greater PHP version than the one Elementor is using. You need to check the minimum required PHP version before loading the main functionality, using the following code:
+
+    <!--?php
+    final class Elementor_Test_Extension {
+
+    	const MINIMUM_PHP_VERSION = '7.0';
+
+    	public function is_compatible() {
+
+    		// Check for required PHP version
+    		if ( version_compare( PHP_VERSION, self::MINIMUM_PHP_VERSION, '<' ) ) {
+    			add_action( 'admin_notices', [ $this, 'admin_notice_minimum_php_version' ] );
+    			return false;
+    		}
+
+    		return true;
+    	}
+
+    	public function admin_notice_minimum_php_version() {
+
+    		if ( isset( $_GET['activate'] ) ) unset( $_GET['activate'] );
+
+    		$message = sprintf(
+    			/* translators: 1: Plugin name 2: PHP 3: Required PHP version */
+    			esc_html__( '"%1$s" requires "%2$s" version %3$s or greater.', 'elementor-test-extension' ),
+    			'<strong-->' . esc_html__( 'Elementor Test Extension', 'elementor-test-extension' ) . '',
+    			'<strong>' . esc_html__( 'PHP', 'elementor-test-extension' ) . '</strong>',
+    			 self::MINIMUM_PHP_VERSION
+    		);
+
+    		printf( '<div class="notice notice-warning is-dismissible"><p>%1$s</p></div>', $message );
+
+    	}
+
+    }
+
+
+If an old PHP version is in use, an admin notice will be displayed and it won’t continue loading the functionality.
+
+### Include Files
+
+Only when all check have passed, the extension should load all the files required to run the plugin at the correct hooks. It can be done using the following code:
+
+    <!--?php
+    final class Elementor_Test_Extension {
+
+    	public function init() {
+
+    		// Add Plugin actions
+    		add_action( 'elementor/widgets/widgets_registered', [ $this, 'init_widgets' ] );
+    		add_action( 'elementor/controls/controls_registered', [ $this, 'init_controls' ] );
+
+    	}
+
+    	public function init_widgets() {
+
+    		// Include Widget files
+    		require_once( __DIR__ . '/widgets/test-widget.php' );
+
+    		// Register widget
+    		\Elementor\Plugin::instance()--->widgets_manager-&gt;register_widget_type( new \Elementor_Test_Widget() );
+
+    	}
+
+    	public function init_controls() {
+
+    		// Include Control files
+    		require_once( __DIR__ . '/controls/test-control.php' );
+
+    		// Register control
+    		\Elementor\Plugin::$instance-&gt;controls_manager-&gt;register_control( 'control-type-', new \Test_Control() );
+
+    	}
+    }
+
+## The Entire Code
+
+Altogether the class with some header data and extra phpDocs should look something like this:
+
+    <!--?php
+    /**
+     * Plugin Name: Elementor Test Extension
+     * Description: Custom Elementor extension.
+     * Plugin URI:  https://elementor.com/
+     * Version:     1.0.0
+     * Author:      Elementor
+     * Author URI:  https://elementor.com/
+     * Text Domain: elementor-test-extension
+     */
+
+    if ( ! defined( 'ABSPATH' ) ) {
+    	exit; // Exit if accessed directly.
+    }
+
+    /**
+     * Main Elementor Test Extension Class
+     *
+     * The main class that initiates and runs the plugin.
+     *
+     * @since 1.0.0
+     */
+    final class Elementor_Test_Extension {
+
+    	/**
+    	 * Plugin Version
+    	 *
+    	 * @since 1.0.0
+    	 *
+    	 * @var string The plugin version.
+    	 */
+    	const VERSION = '1.0.0';
+
+    	/**
+    	 * Minimum Elementor Version
+    	 *
+    	 * @since 1.0.0
+    	 *
+    	 * @var string Minimum Elementor version required to run the plugin.
+    	 */
+    	const MINIMUM_ELEMENTOR_VERSION = '2.0.0';
+
+    	/**
+    	 * Minimum PHP Version
+    	 *
+    	 * @since 1.0.0
+    	 *
+    	 * @var string Minimum PHP version required to run the plugin.
+    	 */
+    	const MINIMUM_PHP_VERSION = '7.0';
+
+    	/**
+    	 * Instance
+    	 *
+    	 * @since 1.0.0
+    	 *
+    	 * @access private
+    	 * @static
+    	 *
+    	 * @var Elementor_Test_Extension The single instance of the class.
+    	 */
+    	private static $_instance = null;
+
+    	/**
+    	 * Instance
+    	 *
+    	 * Ensures only one instance of the class is loaded or can be loaded.
+    	 *
+    	 * @since 1.0.0
+    	 *
+    	 * @access public
+    	 * @static
+    	 *
+    	 * @return Elementor_Test_Extension An instance of the class.
+    	 */
+    	public static function instance() {
+
+    		if ( is_null( self::$_instance ) ) {
+    			self::$_instance = new self();
+    		}
+    		return self::$_instance;
+
+    	}
+
+    	/**
+    	 * Constructor
+    	 *
+    	 * @since 1.0.0
+    	 *
+    	 * @access public
+    	 */
+    	public function __construct() {
+
+    		add_action( 'plugins_loaded', [ $this, 'on_plugins_loaded' ] );
+
+    	}
+
+    	/**
+    	 * Load Textdomain
+    	 *
+    	 * Load plugin localization files.
+    	 *
+    	 * Fired by `init` action hook.
+    	 *
+    	 * @since 1.0.0
+    	 *
+    	 * @access public
+    	 */
+    	public function i18n() {
+
+    		load_plugin_textdomain( 'elementor-test-extension' );
+
+    	}
+
+    	/**
+    	 * On Plugins Loaded
+    	 *
+    	 * Checks if Elementor has loaded, and performs some compatibility checks.
+    	 * If All checks pass, inits the plugin.
+    	 *
+    	 * Fired by `plugins_loaded` action hook.
+    	 *
+    	 * @since 1.0.0
+    	 *
+    	 * @access public
+    	 */
+    	public function on_plugins_loaded() {
+
+    		if ( $this--->is_compatible() ) {
+    			add_action( 'elementor/init', [ $this, 'init' ] );
+    		}
+
+    	}
+
+    	/**
+    	 * Compatibility Checks
+    	 *
+    	 * Checks if the installed version of Elementor meets the plugin's minimum requirement.
+    	 * Checks if the installed PHP version meets the plugin's minimum requirement.
+    	 *
+    	 * @since 1.0.0
+    	 *
+    	 * @access public
+    	 */
+    	public function is_compatible() {
+
+    		// Check if Elementor installed and activated
+    		if ( ! did_action( 'elementor/loaded' ) ) {
+    			add_action( 'admin_notices', [ $this, 'admin_notice_missing_main_plugin' ] );
+    			return false;
+    		}
+
+    		// Check for required Elementor version
+    		if ( ! version_compare( ELEMENTOR_VERSION, self::MINIMUM_ELEMENTOR_VERSION, '&gt;=' ) ) {
+    			add_action( 'admin_notices', [ $this, 'admin_notice_minimum_elementor_version' ] );
+    			return false;
+    		}
+
+    		// Check for required PHP version
+    		if ( version_compare( PHP_VERSION, self::MINIMUM_PHP_VERSION, '&lt;' ) ) {
+    			add_action( 'admin_notices', [ $this, 'admin_notice_minimum_php_version' ] );
+    			return false;
+    		}
+
+    		return true;
+
+    	}
+
+    	/**
+    	 * Initialize the plugin
+    	 *
+    	 * Load the plugin only after Elementor (and other plugins) are loaded.
+    	 * Load the files required to run the plugin.
+    	 *
+    	 * Fired by `plugins_loaded` action hook.
+    	 *
+    	 * @since 1.0.0
+    	 *
+    	 * @access public
+    	 */
+    	public function init() {
+
+    		$this-&gt;i18n();
+
+    		// Add Plugin actions
+    		add_action( 'elementor/widgets/widgets_registered', [ $this, 'init_widgets' ] );
+    		add_action( 'elementor/controls/controls_registered', [ $this, 'init_controls' ] );
+
+    	}
+
+    	/**
+    	 * Init Widgets
+    	 *
+    	 * Include widgets files and register them
+    	 *
+    	 * @since 1.0.0
+    	 *
+    	 * @access public
+    	 */
+    	public function init_widgets() {
+
+    		// Include Widget files
+    		require_once( __DIR__ . '/widgets/test-widget.php' );
+
+    		// Register widget
+    		\Elementor\Plugin::instance()-&gt;widgets_manager-&gt;register_widget_type( new \Elementor_Test_Widget() );
+
+    	}
+
+    	/**
+    	 * Init Controls
+    	 *
+    	 * Include controls files and register them
+    	 *
+    	 * @since 1.0.0
+    	 *
+    	 * @access public
+    	 */
+    	public function init_controls() {
+
+    		// Include Control files
+    		require_once( __DIR__ . '/controls/test-control.php' );
+
+    		// Register control
+    		\Elementor\Plugin::$instance-&gt;controls_manager-&gt;register_control( 'control-type-', new \Test_Control() );
+
+    	}
+
+    	/**
+    	 * Admin notice
+    	 *
+    	 * Warning when the site doesn't have Elementor installed or activated.
+    	 *
+    	 * @since 1.0.0
+    	 *
+    	 * @access public
+    	 */
+    	public function admin_notice_missing_main_plugin() {
+
+    		if ( isset( $_GET['activate'] ) ) unset( $_GET['activate'] );
+
+    		$message = sprintf(
+    			/* translators: 1: Plugin name 2: Elementor */
+    			esc_html__( '"%1$s" requires "%2$s" to be installed and activated.', 'elementor-test-extension' ),
+    			'<strong>' . esc_html__( 'Elementor Test Extension', 'elementor-test-extension' ) . '</strong>',
+    			'<strong>' . esc_html__( 'Elementor', 'elementor-test-extension' ) . '</strong>'
+    		);
+
+    		printf( '<div class="notice notice-warning is-dismissible"><p>%1$s</p></div>', $message );
+
+    	}
+
+    	/**
+    	 * Admin notice
+    	 *
+    	 * Warning when the site doesn't have a minimum required Elementor version.
+    	 *
+    	 * @since 1.0.0
+    	 *
+    	 * @access public
+    	 */
+    	public function admin_notice_minimum_elementor_version() {
+
+    		if ( isset( $_GET['activate'] ) ) unset( $_GET['activate'] );
+
+    		$message = sprintf(
+    			/* translators: 1: Plugin name 2: Elementor 3: Required Elementor version */
+    			esc_html__( '"%1$s" requires "%2$s" version %3$s or greater.', 'elementor-test-extension' ),
+    			'<strong>' . esc_html__( 'Elementor Test Extension', 'elementor-test-extension' ) . '</strong>',
+    			'<strong>' . esc_html__( 'Elementor', 'elementor-test-extension' ) . '</strong>',
+    			 self::MINIMUM_ELEMENTOR_VERSION
+    		);
+
+    		printf( '<div class="notice notice-warning is-dismissible"><p>%1$s</p></div>', $message );
+
+    	}
+
+    	/**
+    	 * Admin notice
+    	 *
+    	 * Warning when the site doesn't have a minimum required PHP version.
+    	 *
+    	 * @since 1.0.0
+    	 *
+    	 * @access public
+    	 */
+    	public function admin_notice_minimum_php_version() {
+
+    		if ( isset( $_GET['activate'] ) ) unset( $_GET['activate'] );
+
+    		$message = sprintf(
+    			/* translators: 1: Plugin name 2: PHP 3: Required PHP version */
+    			esc_html__( '"%1$s" requires "%2$s" version %3$s or greater.', 'elementor-test-extension' ),
+    			'<strong>' . esc_html__( 'Elementor Test Extension', 'elementor-test-extension' ) . '</strong>',
+    			'<strong>' . esc_html__( 'PHP', 'elementor-test-extension' ) . '</strong>',
+    			 self::MINIMUM_PHP_VERSION
+    		);
+
+    		printf( '<div class="notice notice-warning is-dismissible"><p>%1$s</p></div>', $message );
+
+    	}
+
+    }
+
+    Elementor_Test_Extension::instance();
+
+
+## What’s Next?
+
+Now that we have a basic WordPress plugin that extends Elementor we can:
+
+* [    dd Custom Functionality](https://developers.elementor.com/add-custom-functionality/) – like registering scripts and style.
+
+* [    dd new Elementor Widgets](https://developers.elementor.com/creating-a-new-widget/) – create your own widgets.
+
+* [    dd new Elementor Controls](https://developers.elementor.com/creating-a-new-control/) – create advanced controls (input fields) for your widgets.
