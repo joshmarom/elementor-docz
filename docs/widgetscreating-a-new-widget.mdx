@@ -1,0 +1,286 @@
+---
+name: Creating a New Widget
+menu: Widgets
+route: widgets/creating-a-new-widget
+---
+# Creating a New Widget
+
+Creating a custom Elementor Widget is not very different from creating a native WordPress widget, you basically start by creating a class that extends the **[Widget_Base](https://code.elementor.com/classes/elementor-widget_base/) **class and fill in all the required methods.
+
+Each widget needs to have a few basic settings like a unique name that the widget will be identified by in the code, a title that will be used as the widget label and an icon. On top of that we have some advanced settings like the widget controls which are basically the fields where the user select his custom data, and the render script that generates the final output based on the user data from the widget controls.
+
+## Widget Structure
+
+As mentioned above, Elementor Widget extends the **[Widget_Base](https://code.elementor.com/classes/elementor-widget_base/) **class and inherits his methods. A simple Widget skeleton will look like this:
+
+    <!--?php
+    class Elementor_Test_Widget extends \Elementor\Widget_Base {
+
+    	public function get_name() {}
+
+    	public function get_title() {}
+
+    	public function get_icon() {}
+
+    	public function get_categories() {}
+
+    	protected function _register_controls() {}
+
+    	protected function render() {}
+
+    	protected function _content_template() {}
+
+    }
+
+
+Let’s break it down:
+
+* **Widget Name** – The `get_name()` method is a simple one, you just need to return a widget name that will be used in the code.
+
+* **Widget Title** – The `get_title()` method, which again, is a very simple one, you need to return the widget title that will be displayed as the widget label.
+
+* **Widget Icon** – The `get_icon()` method, is an optional but recommended method, it lets you set the widget icon. you can use any of the eicon or font-awesome icons, simply return the class name as a string.
+
+* **Widget Categories** – The `get_categories` method, lets you set the category of the widget, return the category name as a string.
+
+* **Widget Controls** – The `\register_controls` method lets you define which controls (setting fields) your widget will have.
+
+* **Render Frontend Output** – The `render()` method, which is where you actually render the code and generate the final HTML on the frontend using PHP.
+
+* **Render Editor Output** – The `\content_template()` method, is where you render the editor output to generate the live preview using a Backbone JavaScript template.
+
+The **[Widget_Base](https://code.elementor.com/classes/elementor-widget_base/) **class has many more methods you can use to do different things but for now, this should be good enough.
+
+## Simple Elementor Widget
+
+To put all of the pieces together we are going to create a simple Elementor widget which will use the native oEmbed functionality of WordPress.
+
+### Widget Class
+
+First we need to create a class that extends the **[Widget_Base](https://code.elementor.com/classes/elementor-widget_base/) ** class:
+
+    class Elementor_oEmbed_Widget extends \Elementor\Widget_Base {
+    }
+
+### Widget Data
+
+Now that we have a class for our widget, we can start filling in the methods. The first four methods are dead simple:
+
+    <?php
+    class Elementor_Test_Widget extends \Elementor\Widget_Base {
+
+    	public function get_name() {
+    		return 'oembed';
+    	}
+
+    	public function get_title() {
+    		return __( 'oEmbed', 'plugin-name' );
+    	}
+
+    	public function get_icon() {
+    		return 'fa fa-code';
+    	}
+
+    	public function get_categories() {
+    		return [ 'general' ];
+    	}
+
+    }
+
+
+### Widget Controls
+
+Next we need to add the widget controls using the `\register_controls()` method. in this case, we only have one control which is a simple URL input:
+
+    <?php
+    class Elementor_Test_Widget extends \Elementor\Widget_Base {
+
+    	protected function _register_controls() {
+
+    		$this--->start_controls_section(
+    			'content_section',
+    			[
+    				'label' =&gt; __( 'Content', 'plugin-name' ),
+    				'tab' =&gt; \Elementor\Controls_Manager::TAB_CONTENT,
+    			]
+    		);
+
+    		$this-&gt;add_control(
+    			'url',
+    			[
+    				'label' =&gt; __( 'URL to embed', 'plugin-name' ),
+    				'type' =&gt; \Elementor\Controls_Manager::TEXT,
+    				'input_type' =&gt; 'url',
+    				'placeholder' =&gt; __( 'https://your-link.com', 'plugin-name' ),
+    			]
+    		);
+
+    		$this-&gt;end_controls_section();
+
+    	}
+
+    }
+
+
+### Frontend Rendering
+
+And last, we need to implement our `render()` method which takes the URL the user inputs in the above URL control and get the oEmbed content to display using the native [**wp_oembed_get()**](https://developer.wordpress.org/reference/functions/wp_oembed_get/) function.
+
+    <!--?php
+    class Elementor_Test_Widget extends \Elementor\Widget_Base {
+
+    	protected function render() {
+
+    		$settings = $this--->get_settings_for_display();
+
+    		$html = wp_oembed_get( $settings['url'] );
+
+    		echo '<div class="oembed-elementor-widget">';
+
+    		echo ( $html ) ? $html : $settings['url'];
+
+    		echo '</div>';
+
+    	}
+
+    }
+
+
+First are going to retrieve the saved settings for the current widget, then use the `wp_oembed_get()` function to turn the URL into embbedable content into the `$html` parameter. If embbedable content was found, we will print the content HTML, otherwise we will print the URL. We are also going to add a simple wrapper to our widget with the `oembed-elementor-widget` CSS class.
+
+## The Entire Code
+
+Altogether the widget class with some extra phpDocs should look something like this:
+
+    <!--?php
+    /**
+     * Elementor oEmbed Widget.
+     *
+     * Elementor widget that inserts an embbedable content into the page, from any given URL.
+     *
+     * @since 1.0.0
+     */
+    class Elementor_oEmbed_Widget extends \Elementor\Widget_Base {
+
+    	/**
+    	 * Get widget name.
+    	 *
+    	 * Retrieve oEmbed widget name.
+    	 *
+    	 * @since 1.0.0
+    	 * @access public
+    	 *
+    	 * @return string Widget name.
+    	 */
+    	public function get_name() {
+    		return 'oembed';
+    	}
+
+    	/**
+    	 * Get widget title.
+    	 *
+    	 * Retrieve oEmbed widget title.
+    	 *
+    	 * @since 1.0.0
+    	 * @access public
+    	 *
+    	 * @return string Widget title.
+    	 */
+    	public function get_title() {
+    		return __( 'oEmbed', 'plugin-name' );
+    	}
+
+    	/**
+    	 * Get widget icon.
+    	 *
+    	 * Retrieve oEmbed widget icon.
+    	 *
+    	 * @since 1.0.0
+    	 * @access public
+    	 *
+    	 * @return string Widget icon.
+    	 */
+    	public function get_icon() {
+    		return 'fa fa-code';
+    	}
+
+    	/**
+    	 * Get widget categories.
+    	 *
+    	 * Retrieve the list of categories the oEmbed widget belongs to.
+    	 *
+    	 * @since 1.0.0
+    	 * @access public
+    	 *
+    	 * @return array Widget categories.
+    	 */
+    	public function get_categories() {
+    		return [ 'general' ];
+    	}
+
+    	/**
+    	 * Register oEmbed widget controls.
+    	 *
+    	 * Adds different input fields to allow the user to change and customize the widget settings.
+    	 *
+    	 * @since 1.0.0
+    	 * @access protected
+    	 */
+    	protected function _register_controls() {
+
+    		$this--->start_controls_section(
+    			'content_section',
+    			[
+    				'label' =&gt; __( 'Content', 'plugin-name' ),
+    				'tab' =&gt; \Elementor\Controls_Manager::TAB_CONTENT,
+    			]
+    		);
+
+    		$this-&gt;add_control(
+    			'url',
+    			[
+    				'label' =&gt; __( 'URL to embed', 'plugin-name' ),
+    				'type' =&gt; \Elementor\Controls_Manager::TEXT,
+    				'input_type' =&gt; 'url',
+    				'placeholder' =&gt; __( 'https://your-link.com', 'plugin-name' ),
+    			]
+    		);
+
+    		$this-&gt;end_controls_section();
+
+    	}
+
+    	/**
+    	 * Render oEmbed widget output on the frontend.
+    	 *
+    	 * Written in PHP and used to generate the final HTML.
+    	 *
+    	 * @since 1.0.0
+    	 * @access protected
+    	 */
+    	protected function render() {
+
+    		$settings = $this-&gt;get_settings_for_display();
+
+    		$html = wp_oembed_get( $settings['url'] );
+
+    		echo '<div class="oembed-elementor-widget">';
+
+    		echo ( $html ) ? $html : $settings['url'];
+
+    		echo '</div>';
+
+    	}
+
+    }
+
+
+## Final Notes
+
+A few things to note:
+
+- Your plugin should only include the widget class file if Elementor is active and loaded.
+
+- There are other methods available to make your widget more reactive like `\content_template()` which lets you recreate the `render()` method in JavaScript to be used in the Editor which uses [MarionetteJS template engine](https://marionettejs.com/docs/master/template.html) and using it will render the content of the widget on any instantly on any change to one of his controls without making a request to the server.
+
+- There are many types of controls you can add to your widget to make it easier to configure. We have a separate section with a full [list of available controls](https://developers.elementor.com/elementor-controls/).
