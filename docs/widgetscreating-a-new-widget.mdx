@@ -12,8 +12,8 @@ Each widget needs to have a few basic settings like a unique name that the widge
 ## Widget Structure
 
 As mentioned above, Elementor Widget extends the **[Widget_Base](https://code.elementor.com/classes/elementor-widget_base/) **class and inherits his methods. A simple Widget skeleton will look like this:
-
-    <!--?php
+```php
+    <?php
     class Elementor_Test_Widget extends \Elementor\Widget_Base {
 
     	public function get_name() {}
@@ -31,7 +31,7 @@ As mentioned above, Elementor Widget extends the **[Widget_Base](https://code.el
     	protected function _content_template() {}
 
     }
-
+```
 
 Let’s break it down:
 
@@ -58,14 +58,14 @@ To put all of the pieces together we are going to create a simple Elementor widg
 ### Widget Class
 
 First we need to create a class that extends the **[Widget_Base](https://code.elementor.com/classes/elementor-widget_base/) ** class:
-
+```php
     class Elementor_oEmbed_Widget extends \Elementor\Widget_Base {
     }
-
+```
 ### Widget Data
 
 Now that we have a class for our widget, we can start filling in the methods. The first four methods are dead simple:
-
+```php
     <?php
     class Elementor_Test_Widget extends \Elementor\Widget_Base {
 
@@ -86,12 +86,12 @@ Now that we have a class for our widget, we can start filling in the methods. Th
     	}
 
     }
+```
 
-
-### Widget Controls
+## Widget Controls
 
 Next we need to add the widget controls using the `\register_controls()` method. in this case, we only have one control which is a simple URL input:
-
+```php
     <?php
     class Elementor_Test_Widget extends \Elementor\Widget_Base {
 
@@ -120,13 +120,13 @@ Next we need to add the widget controls using the `\register_controls()` method
     	}
 
     }
+```
 
-
-### Frontend Rendering
+## Frontend Rendering
 
 And last, we need to implement our `render()` method which takes the URL the user inputs in the above URL control and get the oEmbed content to display using the native [**wp_oembed_get()**](https://developer.wordpress.org/reference/functions/wp_oembed_get/) function.
-
-    <!--?php
+```php
+    <?php
     class Elementor_Test_Widget extends \Elementor\Widget_Base {
 
     	protected function render() {
@@ -144,15 +144,15 @@ And last, we need to implement our `render()` method which takes the URL the use
     	}
 
     }
-
+```
 
 First are going to retrieve the saved settings for the current widget, then use the `wp_oembed_get()` function to turn the URL into embbedable content into the `$html` parameter. If embbedable content was found, we will print the content HTML, otherwise we will print the URL. We are also going to add a simple wrapper to our widget with the `oembed-elementor-widget` CSS class.
 
 ## The Entire Code
 
 Altogether the widget class with some extra phpDocs should look something like this:
-
-    <!--?php
+```php
+    <?php
     /**
      * Elementor oEmbed Widget.
      *
@@ -273,7 +273,7 @@ Altogether the widget class with some extra phpDocs should look something like t
     	}
 
     }
-
+```
 
 ## Final Notes
 
