@@ -7,11 +7,11 @@ route: /controls/register-widget-controls
 
 Each widget needs to add his own controls which are basically the fields where the user select his custom data. This data is saved in the database and later it is used to generate custom output based on user selection. We need to add controls to the widget using the `\register_controls()` method.
 
-### Register Controls Method
+## Register Controls Method
 
 All the controls are added to the widget using the `\register_controls()` method.
-
-    <!--?php
+```php
+    <?php
     class Elementor_Test_Widget extends \Elementor\Widget_Base {
 
     	protected function _register_controls() {
@@ -27,7 +27,7 @@ All the controls are added to the widget using the `\register_controls()` metho
     }
 
 
-### Available Control Types
+## Available Control Types
 
 Elementor has three types of controls that can be added to the widget:
 
