@@ -11,8 +11,8 @@ The extensions should implement object-oriented programming. It should have a ma
 ## Plugin Structure
 
 The main plugin class should have basic information about the extensions, to check basic requirements and to load the required files to activate the plugin functionality.
-
-    <!--?php
+```php
+    <?php
     final class Elementor_Test_Extension {
 
     	const VERSION;
@@ -30,12 +30,12 @@ The main plugin class should have basic information about the extensions, to che
 
     }
     Elementor_Test_Extension::instance();
-
+```
 
 ### Single Instance
 
 The plugin class should use a singleton design pattern to make sure it loads only once:
-
+```php
     <?php
     final class Elementor_Test_Extension {
 
@@ -52,12 +52,13 @@ The plugin class should use a singleton design pattern to make sure it loads onl
 
     }
     Elementor_Test_Extension::instance();
-
+```
 
 ### Constructor
 
 The constructor should load localization functionality and initiate the plugin. The init process should check for basic requirements, such as whether Elementor is installed, activated and loaded, and then then run the plugin logic. Note that if one of the basic plugin requirements fails, the plugin logic won’t run.
 
+```php
     <?php
     final class Elementor_Test_Extension {
 
@@ -96,11 +97,12 @@ The constructor should load localization functionality and initiate the plugin. 
     	}
 
     }
-
+```
 
 ### Check if Elementor is Installed
 
-    <!--?php
+```php
+    <?php
     final class Elementor_Test_Extension {
 
     	const MINIMUM_ELEMENTOR_VERSION = '2.0.0';
@@ -132,7 +134,7 @@ The constructor should load localization functionality and initiate the plugin. 
     	}
 
     }
-
+```
 
 If Elementor is not installed and activated, an admin notice will be displayed and it won’t continue loading the functionality.
 
@@ -140,7 +142,8 @@ If Elementor is not installed and activated, an admin notice will be displayed a
 
 Elementor extensions need to check for backwards compatibility with older Elementor versions. It should check for minimum required Elementor version before loading the main functionality, using the following code:
 
-    <!--?php
+```php
+    <?php
     final class Elementor_Test_Extension {
 
     	const MINIMUM_ELEMENTOR_VERSION = '2.0.0';
@@ -173,7 +176,7 @@ Elementor extensions need to check for backwards compatibility with older Elemen
     	}
 
     }
-
+```
 
 If an old Elementor version is in use, an admin notice will be displayed and it won’t continue loading the functionality.
 
@@ -181,7 +184,8 @@ If an old Elementor version is in use, an admin notice will be displayed and it 
 
 Elementor extensions should also check for minimum required PHP version. Keep in mind that Elementor has it’s own minimum required PHP version, the extension should use a greater PHP version than the one Elementor is using. You need to check the minimum required PHP version before loading the main functionality, using the following code:
 
-    <!--?php
+```php
+    <?php
     final class Elementor_Test_Extension {
 
     	const MINIMUM_PHP_VERSION = '7.0';
@@ -214,7 +218,7 @@ Elementor extensions should also check for minimum required PHP version. Keep in
     	}
 
     }
-
+```
 
 If an old PHP version is in use, an admin notice will be displayed and it won’t continue loading the functionality.
 
@@ -222,7 +226,8 @@ If an old PHP version is in use, an admin notice will be displayed and it won’
 
 Only when all check have passed, the extension should load all the files required to run the plugin at the correct hooks. It can be done using the following code:
 
-    <!--?php
+```php
+    <?php
     final class Elementor_Test_Extension {
 
     	public function init() {
@@ -253,12 +258,14 @@ Only when all check have passed, the extension should load all the files require
 
     	}
     }
+```
 
 ## The Entire Code
 
 Altogether the class with some header data and extra phpDocs should look something like this:
 
-    <!--?php
+```php
+    <?php
     /**
      * Plugin Name: Elementor Test Extension
      * Description: Custom Elementor extension.
@@ -563,7 +570,7 @@ Altogether the class with some header data and extra phpDocs should look somethi
     }
 
     Elementor_Test_Extension::instance();
-
+``
 
 ## What’s Next?
 
